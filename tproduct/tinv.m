@@ -1,14 +1,13 @@
-function C = tprod(A,B)
+function invX = tinv(X)
 
-% Tensor-tensor product of two 3 way tensors: C = A*B
-% A - n1*n2*n3 tensor
-% B - n2*l*n3  tensor
-% C - n1*l*n3  tensor
+% tinv(X) is the inverse of the tensor X of size n*n*n3.
+%   A warning message is printed if X is badly scaled or
+%   nearly singular.
 %
-% version 2.0 - 09/10/2017
+% version 1.0 - 14/06/2018
 %
 % Written by Canyi Lu (canyilu@gmail.com)
-%
+% 
 %
 % References: 
 % Canyi Lu, Tensor-Tensor Product Toolbox. Carnegie Mellon University. 
@@ -19,29 +18,26 @@ function C = tprod(A,B)
 % Norm, arXiv preprint arXiv:1804.03728, 2018
 %
 
-[n1,n2,n3] = size(A);
-[m1,m2,m3] = size(B);
-
-if n2 ~= m1 || n3 ~= m3 
-    error('Inner tensor dimensions must agree.');
+[n1,n2,n3] = size(X);
+if n1 ~= n2
+    error('Error using tinv. Tensor must be square.');
 end
 
-A = fft(A,[],3);
-B = fft(B,[],3);
-C = zeros(n1,m2,n3);
-
+X = fft(X,[],3);
+invX = zeros(n1,n2,n3);
+I = eye(n1);
 % first frontal slice
-C(:,:,1) = A(:,:,1)*B(:,:,1);
+invX(:,:,1) = X(:,:,1)\I;
 % i=2,...,halfn3
 halfn3 = round(n3/2);
 for i = 2 : halfn3
-    C(:,:,i) = A(:,:,i)*B(:,:,i);
-    C(:,:,n3+2-i) = conj(C(:,:,i));
+    invX(:,:,i) = X(:,:,i)\I;
+    invX(:,:,n3+2-i) = conj(invX(:,:,i));
 end
-
 % if n3 is even
 if mod(n3,2) == 0
     i = halfn3+1;
-    C(:,:,i) = A(:,:,i)*B(:,:,i);
+    invX(:,:,i) = X(:,:,i)\I;
 end
-C = ifft(C,[],3);
+invX = ifft(invX,[],3);
+
