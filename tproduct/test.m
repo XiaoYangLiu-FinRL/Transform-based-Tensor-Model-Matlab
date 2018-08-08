@@ -177,3 +177,10 @@ QtQ = tprod(tran(Q),Q);
 I = teye(n1,n3);
 diftqr2 = norm(QtQ(:)-I(:))
 
+%% tam :tubal Alternating Minization
+m = 25; 
+n = 25;
+k = 20;
+r = 5;        % the tubal-rank
+l = 5;       %number of iteration l 
+[T,error]=tam(m,n,k,r,l);
