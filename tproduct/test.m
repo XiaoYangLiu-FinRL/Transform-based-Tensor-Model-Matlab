@@ -184,3 +184,22 @@ k = 20;
 r = 5;        % the tubal-rank
 l = 5;       %number of iteration l 
 [T,error]=tam(m,n,k,r,l);
+
+%% tfft: tensor fft
+%test fourth order tensor
+m = 2;
+n = 3;
+k = 4;
+l = 5;
+A = zeros(m,n,k,l);
+for i = 1:m*n*k*l
+    A(i) = complex(i-1,-i+1);
+end
+for i =1:k
+    for j =1:l
+    A1(:,:,i,j)=A(:,:,i,j)';
+    end
+end
+B = tfft(A1);
+A2 = itfft(B);
+C = A2 - A1;
